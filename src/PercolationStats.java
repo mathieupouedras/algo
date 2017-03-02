@@ -1,12 +1,12 @@
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
-import java.util.Arrays;
-
 public class PercolationStats {
 
-    private Percolation percolation;
     private final int gridSize;
+    private final int trials;
+    private final double[] results;
+    private Percolation percolation;
 
     public PercolationStats(int gridSize, int trials) {
         if (gridSize <= 0) {
@@ -17,23 +17,41 @@ public class PercolationStats {
         }
 
         this.gridSize = gridSize;
+        this.trials = trials;
 
-        for (int i = 0; i < trials; i++) {
-            percolation = new Percolation(gridSize);
-            System.out.println(proba());
-        }
+        this.results = new double[trials];
     }
 
-    public double proba() {
+    public static void main(String[] args) {
+        int gridSize = Integer.parseInt(args[0]);
+        int trials = Integer.parseInt(args[1]);
+
+        PercolationStats percolationStats = new PercolationStats(gridSize, trials);
+        percolationStats.compute();
+
+        System.out.println("mean = " + percolationStats.mean());
+        System.out.println("stddev = " + percolationStats.stddev());
+        System.out.println("95% confidence interval = " +
+                "[" + percolationStats.confidenceLo() + ", [" + percolationStats.confidenceHi() + "]");
+    }
+
+    private double proba() {
         int[] sites = StdRandom.permutation(gridSize * gridSize);
 
         int i = 0;
-        while(true) {
-            percolation.open(getRow(i) + 1, getCol(i) + 1);
+        while (true) {
+            percolation.open(getRow(sites[i]) + 1, getCol(sites[i]) + 1);
             if (percolation.percolates()) {
-                return percolation.numberOfOpenSites() / (this.gridSize * this.gridSize);
+                return ((double) percolation.numberOfOpenSites()) / ((double) (this.gridSize * this.gridSize));
             }
             i++;
+        }
+    }
+
+    private void compute() {
+        for (int i = 0; i < trials; i++) {
+            percolation = new Percolation(gridSize);
+            results[i] = proba();
         }
     }
 
@@ -45,15 +63,21 @@ public class PercolationStats {
         return site % gridSize;
     }
 
-
-    public static void main(String[] args) {
-        int gridSize = Integer.valueOf(args[0]);
-        int trials = Integer.valueOf(args[1]);
-
-        PercolationStats percolationStats = new PercolationStats(gridSize, trials);
-
+    public double mean() {
+        return StdStats.mean(results);
     }
 
+    public double stddev() {
+        return StdStats.stddev(results);
+    }
+
+    public double confidenceHi() {
+        return mean() + ((2 * stddev()) / (Math.sqrt(trials)));
+    }
+
+    public double confidenceLo() {
+        return mean() - ((2 * stddev()) / (Math.sqrt(trials)));
+    }
 }
 
 

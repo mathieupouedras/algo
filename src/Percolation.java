@@ -18,11 +18,29 @@ public class Percolation {
         unionFind = new WeightedQuickUnionUF(this.gridSize * this.gridSize);
 
         grid = new boolean[this.gridSize][this.gridSize];
-        for (int i  = 0; i < this.gridSize; i++) {
+        for (int i = 0; i < this.gridSize; i++) {
             for (int j = 0; j < this.gridSize; j++) {
                 grid[i][j] = false;
             }
         }
+    }
+
+    public static void main(String[] args) {
+        Percolation percolation = new Percolation(4);
+
+        percolation.open(2, 3);
+        percolation.open(3, 3);
+        percolation.open(3, 2);
+        percolation.open(4, 2);
+        percolation.open(1, 3);
+
+        System.out.println(percolation.isFull(1, 3));
+
+        System.out.println(percolation.printGrid());
+
+
+        System.out.println(percolation.percolates());
+
     }
 
     public void open(int row, int col) {
@@ -58,14 +76,14 @@ public class Percolation {
         }
         // east
         if (col > 1) {
-            if (this.isOpen(row , col - 1)) {
-                this.unionFind.union(getSiteNumber(row, col), getSiteNumber(row , col - 1));
+            if (this.isOpen(row, col - 1)) {
+                this.unionFind.union(getSiteNumber(row, col), getSiteNumber(row, col - 1));
             }
         }
         // west
         if (col < this.gridSize) {
-            if (this.isOpen(row , col + 1)) {
-                this.unionFind.union(getSiteNumber(row, col), getSiteNumber(row , col + 1));
+            if (this.isOpen(row, col + 1)) {
+                this.unionFind.union(getSiteNumber(row, col), getSiteNumber(row, col + 1));
             }
         }
     }
@@ -79,7 +97,7 @@ public class Percolation {
             throw new IllegalArgumentException(buildErrorMessage(col));
         }
 
-        return this.grid[row -1][col-1];
+        return this.grid[row - 1][col - 1];
     }
 
     public boolean isFull(int row, int col) {
@@ -90,11 +108,15 @@ public class Percolation {
         if (this.isOutsideRange(col)) {
             throw new IllegalArgumentException(buildErrorMessage(col));
         }
+        int component = unionFind.find(getSiteNumber(row, col));
         for (int topSite = 0; topSite < this.gridSize - 1; topSite++) {
-            int component = unionFind.find(getSiteNumber(row, col));
-            if ( component == unionFind.find(getSiteNumber(1, topSite +1))) {
-                if (component == unionFind.find(getSiteNumber(this.gridSize, topSite +1))) {
-                    return true;
+            int topComponent = unionFind.find(getSiteNumber(1, topSite + 1));
+            if (component == topComponent) {
+                for (int botomSite = 0; botomSite < this.gridSize - 1; botomSite++) {
+                    int bottomComponent = unionFind.find(getSiteNumber(this.gridSize, botomSite + 1));
+                    if (component == bottomComponent) {
+                        return true;
+                    }
                 }
             }
         }
@@ -111,12 +133,12 @@ public class Percolation {
     }
 
     private int getSiteNumber(int row, int col) {
-        return ((row - 1) * this.gridSize) + col;
+        return ((row - 1) * this.gridSize) + col - 1;
     }
 
     private boolean isOutsideRange(int value) {
         if (value <= 0) return true;
-        if (value > this.gridSize ) return true;
+        if (value > this.gridSize) return true;
         return false;
     }
 
@@ -127,15 +149,15 @@ public class Percolation {
         return incorrectValue + " is outside accepted range " + acceptedRange;
     }
 
-    public static void main(String[] args) {
-        Percolation percolation = new Percolation(4);
-        percolation.open(1, 1);
-        percolation.open(2, 1);
-        percolation.open(3, 1);
-        percolation.open(4, 1);
-
-        System.out.println(percolation.percolates());
-
+    private String printGrid() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int row = 0; row < this.gridSize; row++) {
+            for (int col = 0; col < this.gridSize; col++) {
+                stringBuilder.append(grid[row][col] ? 1 + " " : 0 + " ");
+            }
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
     }
 
 }
