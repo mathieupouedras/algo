@@ -6,7 +6,6 @@ public class PercolationStats {
     private final int gridSize;
     private final int trials;
     private final double[] results;
-    private Percolation percolation;
 
     public PercolationStats(int gridSize, int trials) {
         if (gridSize <= 0) {
@@ -20,6 +19,8 @@ public class PercolationStats {
         this.trials = trials;
 
         this.results = new double[trials];
+
+        compute();
     }
 
     public static void main(String[] args) {
@@ -37,6 +38,7 @@ public class PercolationStats {
 
     private double proba() {
         int[] sites = StdRandom.permutation(gridSize * gridSize);
+        Percolation percolation = new Percolation(gridSize);
 
         int i = 0;
         while (true) {
@@ -50,7 +52,6 @@ public class PercolationStats {
 
     private void compute() {
         for (int i = 0; i < trials; i++) {
-            percolation = new Percolation(gridSize);
             results[i] = proba();
         }
     }
@@ -79,5 +80,4 @@ public class PercolationStats {
         return mean() - ((2 * stddev()) / (Math.sqrt(trials)));
     }
 }
-
 
