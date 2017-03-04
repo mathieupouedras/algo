@@ -7,7 +7,6 @@ public class Percolation {
     private final WeightedQuickUnionUF unionFind;
     private final boolean[][] grid;
     private int openSitesCount = 0;
-    private boolean isPercolating = false;
 
     public Percolation(int gridSize) {
         if (gridSize <= 0) {
@@ -120,6 +119,11 @@ public class Percolation {
         if (this.isOutsideRange(col)) {
             throw new IllegalArgumentException(buildErrorMessage(col));
         }
+
+        if (!isOpen(row, col)) {
+            return false;
+        }
+
         int component = unionFind.find(getSiteNumber(row, col));
         for (int topSite = 0; topSite < this.gridSize; topSite++) {
             int topComponent = unionFind.find(getSiteNumber(1, topSite + 1));
