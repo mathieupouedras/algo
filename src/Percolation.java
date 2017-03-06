@@ -7,19 +7,26 @@ public class Percolation {
     private final Site[] sites;
     private final WeightedQuickUnionUF weightedQuickUnionUF;
     private int openSitesCount = 0;
+    private Site virtualTop;
+    private Site virtualBottom;
 
     public Percolation(int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("illegal size : " + size);
         }
         this.size = size;
-        this.weightedQuickUnionUF = new WeightedQuickUnionUF(size * size);
+        this.weightedQuickUnionUF = new WeightedQuickUnionUF(size * size + 2);
 
-        sites = new Site[size * size];
+        sites = new Site[size * size + 2];
 
         for (int i = 0; i < sites.length; i++) {
             sites[i] = new Site(i);
         }
+
+        virtualTop = sites[size * size];
+        virtualTop.open();
+        virtualBottom = sites[size * size + 1];
+        virtualBottom.open();
     }
 
     public void open(int row, int col) {
@@ -33,6 +40,15 @@ public class Percolation {
 
         site.open();
         openSitesCount++;
+
+        // Connect with virtual top
+        if (row == 1) {
+            weightedQuickUnionUF.union(site.getSiteNumber(), virtualTop.getSiteNumber());
+        }
+
+        if (row == this.size) {
+            weightedQuickUnionUF.union(site.getSiteNumber(), virtualBottom.getSiteNumber());
+        }
 
         Site siteNorth = getSite(row - 1, col);
         if (siteNorth  != null && siteNorth.isOpen()) {
@@ -66,22 +82,7 @@ public class Percolation {
         checkRange(row, col);
 
         Site site = getSite(row, col);
-        if (site.isOpen()) {
-            if (site.getSiteNumber() < this.size) {
-                return true;
-            }
-            for (int i = 1; i <= this.size; i++) {
-                Site topSite = getSite(1, i);
-                if (topSite.isOpen()) {
-                    if (weightedQuickUnionUF.connected(site.getSiteNumber(), topSite.getSiteNumber())) {
-                        return true;
-                    }
-                }
-
-            }
-        }
-
-        return false;
+        return weightedQuickUnionUF.connected(site.getSiteNumber(), this.virtualTop.getSiteNumber());
     }
 
     public int numberOfOpenSites() {
@@ -89,12 +90,7 @@ public class Percolation {
     }
 
     public boolean percolates() {
-        for (int i = 1; i <= this.size; i++) {
-            if (this.isFull(this.size, i)) {
-                return true;
-            }
-        }
-        return false;
+        return weightedQuickUnionUF.connected(this.virtualTop.getSiteNumber(), this.virtualBottom.getSiteNumber());
     }
 
     private boolean isRangeInvalid(int row, int col) {
