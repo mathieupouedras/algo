@@ -45,10 +45,6 @@ public class DequeTest {
         System.out.println(deque);
         System.out.println();
 
-        deque.removeFirst();
-        System.out.println(deque);
-        System.out.println();
-
     }
 
     @Test
@@ -56,17 +52,25 @@ public class DequeTest {
         Deque<String> deque = new Deque<>();
         deque.addLast("A");
         deque.addLast("B");
+        System.out.println(deque);
+        System.out.println();
+
+        deque.removeLast();
+        deque.removeLast();
+        System.out.println(deque);
+        System.out.println();
+
+    }
+
+    @Test
+    public void testIterator() {
+        Deque<String> deque = new Deque<>();
+        deque.addLast("A");
+        deque.addLast("B");
         deque.addLast("C");
-        System.out.println(deque);
-        System.out.println();
-
-        deque.removeLast();
-        deque.removeLast();
-        deque.removeLast();
-        deque.removeLast();
-        System.out.println(deque);
-        System.out.println();
-
+        for (String item: deque) {
+            System.out.println(item);
+        }
     }
 
 

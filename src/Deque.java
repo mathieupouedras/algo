@@ -32,6 +32,9 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     public void addLast(Item item) {
+        if (item == null) {
+            throw new NullPointerException("Cannot addLast null");
+        }
         if (this.isEmpty()) {
             this.addVeryFirstItem(item);
             return;
@@ -54,6 +57,10 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     public void addFirst(Item item) {
+        if (item == null) {
+            throw new NullPointerException("Cannot addFirst null");
+        }
+
         if (this.isEmpty()) {
             this.addVeryFirstItem(item);
             return;
@@ -84,7 +91,6 @@ public class Deque<Item> implements Iterable<Item> {
         firstNode = oldFirstNode.next;
         firstNode.previous = null;
         Item removedItem = oldFirstNode.item;
-        oldFirstNode = null;
 
         size--;
 
@@ -131,6 +137,9 @@ public class Deque<Item> implements Iterable<Item> {
 
         @Override
         public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             Item item = current.item;
             current = current.next;
             return item;
@@ -139,9 +148,9 @@ public class Deque<Item> implements Iterable<Item> {
 
     @Override
     public String toString() {
-        String firstNode = this.firstNode != null ? this.firstNode.toString() : "null";
-        String lastNode = this.lastNode != null ? this.lastNode.toString() : "null";
-        return "First node : " + firstNode.toString() + "\n" + "Last node : " + lastNode.toString();
+        String first = this.firstNode != null ? this.firstNode.toString() : "null";
+        String last = this.lastNode != null ? this.lastNode.toString() : "null";
+        return "First node : " + first + "\n" + "Last node : " + last;
     }
 
     private class Node {
