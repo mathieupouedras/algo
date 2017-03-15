@@ -12,9 +12,11 @@ public class BruteCollinearPoints {
             throw new NullPointerException("Argument points cannot be null");
         }
 
-        validate(points);
+        Point[] defensivePoints = Arrays.copyOf(points, points.length);
 
-        this.points = points;
+        validate(defensivePoints);
+
+        this.points = defensivePoints;
     }
 
     private void validate(Point[] points) {
@@ -37,13 +39,32 @@ public class BruteCollinearPoints {
         }
     }
 
+    public LineSegment[] segments() {
+        LineSegment[] lineSegments = new LineSegment[numberOfSegments()];
+        int segments = 0;
+        Arrays.sort(points);
+        for (int i = 0; i < points.length; i++) {
+            for (int j = i + 1; j < points.length; j++) {
+                for (int k = j + 1; k < points.length; k++) {
+                    for (int l = k + 1; l < points.length; l++) {
+                        if (points[i].slopeTo(points[j])  == points[i].slopeTo(points[k])  && points[i].slopeTo(points[j]) == points[i].slopeTo(points[l])) {
+                            lineSegments[segments] = new LineSegment(points[i], points[l]);
+                            segments++;
+                        }
+                    }
+                }
+            }
+        }
+        return lineSegments;
+    }
+
     public int numberOfSegments() {
         int numberOfSegments = 0;
         for (int i = 0; i < points.length; i++) {
             for (int j = i + 1; j < points.length; j++) {
                 for (int k = j + 1; k < points.length; k++) {
                     for (int l = k + 1; l < points.length; l++) {
-                        if (points[i].compareTo(points[j]) == 0 && points[i].compareTo(points[k]) == 0 && points[i].compareTo(points[l]) == 0) {
+                        if (points[i].slopeTo(points[j])  == points[i].slopeTo(points[k])  && points[i].slopeTo(points[j]) == points[i].slopeTo(points[l])) {
                             numberOfSegments++;
                         }
                     }

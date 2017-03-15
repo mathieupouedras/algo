@@ -59,6 +59,9 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
+        if (isHorizontal(that)) {
+            return 0d;
+        }
         if (isVertical(that)) {
             return Double.POSITIVE_INFINITY;
         }
@@ -77,10 +80,10 @@ public class Point implements Comparable<Point> {
         return this.x  == point.x && this.y != point.y;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    private boolean isHorizontal(Point point) {
+        return this.y  == point.y && this.x != point.x;
     }
+
 
     /**
      * Compares two points by y-coordinate, breaking ties by x-coordinate.
@@ -124,11 +127,12 @@ public class Point implements Comparable<Point> {
         return new Comparator<Point>() {
             @Override
             public int compare(Point point1, Point point2) {
-                double slopeTo =  point1.slopeTo(point2);
-                if (slopeTo > 0) {
+                double slopeToPoint1 =  Point.this.slopeTo(point1);
+                double slopeToPoint2 =  Point.this.slopeTo(point2);
+                if (slopeToPoint1 >  slopeToPoint2) {
                     return 1;
                 }
-                else if (slopeTo < 0) {
+                else if (slopeToPoint1 < slopeToPoint2) {
                     return -1;
                 }
                 else {
