@@ -45,6 +45,14 @@ public class FastCollinearPoints {
             for (int i = 0; i < points.length - 1; i++) {
                 if (origin.slopeTo(points[i]) == origin.slopeTo(points[i + 1])) {
                     last = i + 1;
+                    if (i ==  points.length - 2) {
+                        if ((last - first) >= 2) {
+                            Arrays.sort(points, first, last + 1);
+                            if (origin.compareTo(points[first]) < 0) {
+                                count++;
+                            }
+                        }
+                    }
                 } else {
                     if ((last - first) >= 2) {
                         Arrays.sort(points, first, last + 1);
@@ -73,6 +81,15 @@ public class FastCollinearPoints {
             for (int i = 0; i < points.length - 1; i++) {
                 if (origin.slopeTo(points[i]) == origin.slopeTo(points[i + 1])) {
                     last = i + 1;
+                    if (i ==  points.length - 2) {
+                        if ((last - first) >= 2) {
+                            Arrays.sort(points, first, last + 1);
+                            if (origin.compareTo(points[first]) < 0) {
+                                lineSegments[count] = new LineSegment(origin, points[last]);
+                                count++;
+                            }
+                        }
+                    }
                 } else {
                     if ((last - first) >= 2) {
                         Arrays.sort(points, first, last + 1);

@@ -44,6 +44,9 @@ public class BruteCollinearPointsTest {
         for (LineSegment lineSegment : bruteCollinearPoints.segments()) {
             System.out.println(lineSegment);
         }
+
+        points = null;
+        System.out.println(bruteCollinearPoints.numberOfSegments());
     }
 
 }

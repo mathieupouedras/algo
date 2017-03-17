@@ -9,7 +9,7 @@ public class FastCollinearPointsTest {
 
     @Test
     public void test() {
-        String testFile = "C:\\dev\\algo\\test_data_sort\\input40.txt";
+        String testFile = "C:\\dev\\algo\\test_data_sort\\vertical25.txt";
         In in = new In(testFile);
         int n = in.readInt();
         Point[] points = new Point[n];
@@ -21,6 +21,7 @@ public class FastCollinearPointsTest {
 
         FastCollinearPoints fastCollinearPoints = new FastCollinearPoints(points);
         Arrays.stream(fastCollinearPoints.segments()).forEach(System.out::println);
+        System.out.println(fastCollinearPoints.numberOfSegments());
 
 
 
